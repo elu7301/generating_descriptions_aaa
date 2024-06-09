@@ -9,3 +9,11 @@
 В папке eda находится блокнот с предобработкой данных.  
 Модель и ее обучение находятся в ноутбке в папке model.  
 Реализация сервиса находится в папке src.
+## Как использовать
+Для корректной работы проекта надо скачать веса модели по ссылке https://drive.google.com/drive/folders/1mAqQ54_DDRXK-7wLA_tDreSHZTkWUB1k?usp=drive_linkи поместить в папку src/app/static.  
+
+При создании проекта использовался Python 3.10 и CUDA 2.1. Все необходимые библиотеки указаны в файле requirements.txt. Для их установки выполните команду:
+*  pip install -r requirements.txt  
+
+Чтобы установить pytorch  с поддержкой CUDA на Windows или Linux стоит воспользоваться командой: 
+* pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
