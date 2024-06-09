@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выбор категории - Avito</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 80%;
+            max-width: 500px;
+        }
+        .container h1 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        function updateSubcategories() {
+            const subcategories = {
+                "Женская одежда": ["Брюки", "Верхняя одежда", "Джинсы", "Купальники", "Нижнее бельё", "Платья", "Юбки", "Толстовки и свитшоты", "Джемперы, свитеры, кардиганы", "Пиджаки и костюмы", "Рубашки и блузки", "Свадебные платья", "Топы и футболки", "Другое"],
+                "Женская обувь": ["Туфли", "Сапоги", "Босоножки", "Ботильоны", "Ботинки и полуботинки", "Кроссовки и кеды", "Полусапоги", "Балетки", "Угги, валенки, дутики", "Сабо и мюли", "Резиновая обувь", "Мокасины и лоферы", "Сандалии", "Шлёпанцы и сланцы", "Домашняя обувь", "Спортивная обувь", "Слипоны и эспадрильи", "Уход за обувью"],
+                "Мужская одежда": ["Верхняя одежда", "Кофты и футболки", "Пиджаки и костюмы", "Джинсы", "Брюки", "Рубашки", "Спортивные костюмы", "Шорты", "Нижнее бельё", "Другое"],
+                "Мужская обувь": ["Кроссовки", "Ботинки и полуботинки", "Туфли", "Кеды", "Сапоги и полусапоги", "Мокасины и лоферы", "Спортивная обувь", "Угги, валенки, дутики", "Рабочая обувь", "Резиновая обувь", "Сандалии", "Шлёпанцы и сланцы", "Домашняя обувь", "Слипоны и эспадрильи", "Уход за обувью"],
+                "Аксессуары": [],
+                "Сумки, рюкзаки и чемоданы": ["Сумки", "Рюкзаки", "Чемоданы и дорожные сумки", "Портфели и борсетки", "Кошельки, визитницы, ключницы", "Косметички и бьюти–кейсы"]
+            };
+
+            const category = document.getElementById("category").value;
+            const subcategoryDiv = document.getElementById("subcategory-div");
+            const subcategorySelect = document.getElementById("subcategory");
+
+            if (category === "Аксессуары") {
+                subcategoryDiv.style.display = "none";
+            } else {
+                subcategoryDiv.style.display = "block";
+                subcategorySelect.innerHTML = "";
+
+                subcategories[category].forEach(subcat => {
+                    const option = document.createElement("option");
+                    option.value = subcat;
+                    option.textContent = subcat;
+                    subcategorySelect.appendChild(option);
+                });
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Выбор категории и подкатегории</h1>
+        <form id="categoryForm" action="/select_category" method="POST" onsubmit="return validateForm()">
+            <div class="form-group">
+                <label for="category">Категория:</label>
+                <select id="category" name="category" onchange="updateSubcategories()" required>
+                    <option value="Женская одежда">Женская одежда</option>
+                    <option value="Женская обувь">Женская обувь</option>
+                    <option value="Мужская одежда">Мужская одежда</option>
+                    <option value="Мужская обувь">Мужская обувь</option>
+                    <option value="Аксессуары">Аксессуары</option>
+                    <option value="Сумки, рюкзаки и чемоданы">Сумки, рюкзаки и чемоданы</option>
+                </select>
+            </div>
+            <div class="form-group" id="subcategory-div">
+                <label for="subcategory">Подкатегория:</label>
+                <select id="subcategory" name="subcategory" required>
+                    <!-- Subcategories will be populated here based on selected category -->
+                </select>
+            </div>
+            <button type="submit">Далее</button>
+        </form>
+    </div>
+
+    <script>
+        // Initialize subcategories on page load
+        document.addEventListener("DOMContentLoaded", updateSubcategories);
+
+        function validateForm() {
+            const category = document.getElementById("category").value;
+            if (category === "Аксессуары") {
+                document.getElementById("subcategory").removeAttribute("required");
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

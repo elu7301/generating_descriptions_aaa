@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать объявление - Avito</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+        .header {
+            text-align: left;
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+            padding: 0 20px;
+        }
+        .header h1 {
+            font-size: 2em;
+            font-weight: bold;
+            color: black;
+            margin: 0;
+        }
+        .header p {
+            color: gray;
+            font-size: 1em;
+            margin: 5px 0 20px;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 80%;
+            max-width: 600px;
+            margin-top: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group input[type="file"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-group textarea {
+            resize: vertical;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .section-title {
+            font-weight: bold;
+            text-align: left;
+            font-size: 1.5em;  /* Heading size */
+            margin-top: 40px;  /* Space above */
+            margin-bottom: 20px; /* Space below */
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Новое объявление</h1>
+        <p>Одежда, обувь, аксессуары > {{ category }} > {{ subcategory }}</p>
+    </div>
+    <div class="container">
+        <form id="adForm" action="/create_ad" method="POST" enctype="multipart/form-data">
+            <input type="hidden" id="category" name="category" value="{{ category }}">
+            <input type="hidden" id="subcategory" name="subcategory" value="{{ subcategory }}">
+
+            <div class="form-group">
+                <label for="title">Название объявления:</label>
+                <input type="text" id="title" name="title" required oninput="saveData('Заголовок', this.value)">
+            </div>
+            <div class="form-group">
+                <label for="ad_type">Вид объявления:</label>
+                <select id="ad_type" name="ad_type" required onchange="saveData('Вид обьявления', this.value)">
+                    <option value="Продаю свое">Продаю свое</option>
+                    <option value="Товар приобретен на продажу">Товар приобретен на продажу</option>
+                    <option value="Товар от производителя">Товар от производителя</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="condition">Состояние:</label>
+                <select id="condition" name="condition" required onchange="saveData('Состояние', this.value)">
+                    <option value="Новое с биркой">Новое с биркой</option>
+                    <option value="Отличное">Отличное</option>
+                    <option value="Хорошее">Хорошее</option>
+                    <option value="Удовлетворительное">Удовлетворительное</option>
+                </select>
+            </div>
+
+            <div class="section-title">Внешний вид</div>
+            <div class="form-group">
+                <label for="image">Загрузка фотографий:</label>
+                <input type="file" id="image" name="image" accept="image/*" required onchange="saveData('Изображение', this.files[0].name)">
+            </div>
+
+            <div class="section-title">Характеристики</div>
+            <div class="form-group">
+                <label for="size">Размер:</label>
+                <input type="text" id="size" name="size" required>
+            </div>
+            <div class="form-group">
+                <label for="color">Цвет:</label>
+                <input type="text" id="color" name="color" required oninput="saveData('Цвет', this.value)">
+            </div>
+            <div class="form-group">
+                <label for="brand">Бренд:</label>
+                <input type="text" id="brand" name="brand" required oninput="saveData('Бренд', this.value)">
+            </div>
+            <div class="form-group">
+                <label for="material">Материал основной части:</label>
+                <input type="text" id="material" name="material" required>
+            </div>
+
+            <div class="section-title">Подробности</div>
+            <div class="form-group">
+                <label for="description">Описание:</label>
+                <textarea id="description" name="description" rows="4" required oninput="saveData('Описание', this.value)"></textarea>
+                <button type="button" onclick="requestDescriptionGeneration()">Сгенерировать описание</button>
+            </div>
+            <div class="form-group">
+                <label for="price">Цена:</label>
+                <input type="number" id="price" name="price" required>
+            </div>
+
+            <div class="section-title">Место сделки</div>
+            <div class="form-group">
+                <input type="text" id="location" name="location" required oninput="saveData('Место сделки', this.value)">
+            </div>
+
+            <button type="submit">Создать объявление</button>
+        </form>
+    </div>
+
+    <script>
+        function saveData(field_name, field_value) {
+            const formData = new FormData();
+            formData.append('field_name', field_name);
+            formData.append('field_value', field_value);
+
+            fetch('/save_data', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status !== 'success') {
+                    console.error('Failed to save data');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function requestDescriptionGeneration() {
+            const inputText = document.getElementById('title').value;
+            const image = document.getElementById('image').files[0];
+            const formData = new FormData();
+            formData.append('input_text', inputText);
+            formData.append('image', image);
+
+            fetch('/generate_description', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const descriptionField = document.getElementById('description');
+                descriptionField.value = data.description;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
