@@ -3,13 +3,17 @@ from werkzeug.utils import secure_filename
 import os
 from app.utils import generate_description_logic, user_data
 from PIL import Image
+import io
+
 
 main_bp = Blueprint('main', __name__)
+
 
 @main_bp.route('/')
 def index() -> str:
     """Отображает главную страницу."""
     return render_template('category_select.html')
+
 
 @main_bp.route('/select_category', methods=['POST'])
 def select_category() -> str:
@@ -22,12 +26,14 @@ def select_category() -> str:
         return redirect(url_for('main.ad_details', category=category, subcategory=''))
     return render_template('ad_details.html', category=category, subcategory=subcategory)
 
+
 @main_bp.route('/ad_details', methods=['GET'])
 def ad_details() -> str:
     """Отображает детали объявления."""
     category = request.args.get('category')
     subcategory = request.args.get('subcategory')
     return render_template('ad_details.html', category=category, subcategory=subcategory)
+
 
 @main_bp.route('/save_data', methods=['POST'])
 def save_data() -> dict:
@@ -36,6 +42,7 @@ def save_data() -> dict:
     field_value = request.form['field_value']
     user_data[field_name] = field_value
     return jsonify({'status': 'success'})
+
 
 @main_bp.route('/create_ad', methods=['POST'])
 def create_ad() -> str:
@@ -64,6 +71,7 @@ def create_ad() -> str:
 
     return redirect(url_for('main.index'))
 
+
 @main_bp.route('/generate_description', methods=['POST'])
 def generate_description() -> dict:
     """Генерирует описание."""
@@ -74,7 +82,8 @@ def generate_description() -> dict:
 
     input_text += ', Описание:'
 
-    image = request.files['image']
+    file = request.files['image']
+    image = io.BytesIO(file.read())
     pil_image = Image.open(image).convert('RGB')
 
     description = generate_description_logic(input_text, pil_image)

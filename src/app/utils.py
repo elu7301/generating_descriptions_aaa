@@ -24,10 +24,10 @@ def generate_description_logic(input_text: str, image: PilImage) -> str:
         decoder_input_ids=text.input_ids.cuda(),
         max_length=500,
         eos_token_id=tokenizer_gpt2.eos_token_id,
-        #     do_sample=True,
+        do_sample=True,
         temperature=1.2
     )
 
-    description = tokenizer_gpt2.decode(generated_text)
+    description = tokenizer_gpt2.decode(generated_text[0]).split('Описание: ', maxsplit=1)[1].strip()
 
-    return description
+    return description.strip('</s>')
