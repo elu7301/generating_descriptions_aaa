@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Создать объявление - Avito</title>
-    <link rel="stylesheet" href="styles.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -146,11 +145,6 @@
 
             <div class="section-title">Подробности</div>
             <div class="form-group">
-                <label for="description">Описание:</label>
-                <textarea id="description" name="description" rows="4" required oninput="saveData('Описание', this.value)"></textarea>
-                <button type="button" onclick="requestDescriptionGeneration()">Сгенерировать описание</button>
-            </div>
-            <div class="form-group">
                 <label for="price">Цена:</label>
                 <input type="number" id="price" name="price" required>
             </div>
@@ -158,6 +152,11 @@
             <div class="section-title">Место сделки</div>
             <div class="form-group">
                 <input type="text" id="location" name="location" required oninput="saveData('Место сделки', this.value)">
+            </div>
+            <div class="form-group">
+                <label for="description">Описание:</label>
+                <textarea id="description" name="description" rows="4" required oninput="saveData('Описание', this.value)"></textarea>
+                <button type="button" onclick="requestDescriptionGeneration()">Сгенерировать описание</button>
             </div>
 
             <button type="submit">Создать объявление</button>
