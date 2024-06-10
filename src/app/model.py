@@ -1,11 +1,13 @@
-from transformers import VisionEncoderDecoderModel, ViTFeatureExtractor, GPT2Tokenizer
+from transformers import (VisionEncoderDecoderModel,
+                          ViTFeatureExtractor, GPT2Tokenizer)
 from peft import LoraConfig, get_peft_model
 import torch
 
+model_path = "tuman/vit-rugpt2-image-captioning"
 
-vit = VisionEncoderDecoderModel.from_pretrained("tuman/vit-rugpt2-image-captioning")
-feature_extractor = ViTFeatureExtractor.from_pretrained("tuman/vit-rugpt2-image-captioning")
-tokenizer_gpt2 = GPT2Tokenizer.from_pretrained("tuman/vit-rugpt2-image-captioning")
+vit = VisionEncoderDecoderModel.from_pretrained(model_path)
+feature_extractor = ViTFeatureExtractor.from_pretrained(model_path)
+tokenizer_gpt2 = GPT2Tokenizer.from_pretrained(model_path)
 
 lora_config = LoraConfig(
     r=8,

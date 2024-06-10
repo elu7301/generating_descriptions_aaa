@@ -2,6 +2,7 @@ from flask import Flask
 from app.routes import main_bp
 import os
 
+
 def create_app() -> Flask:
     """
     Создает и настраивает экземпляр Flask-приложения.

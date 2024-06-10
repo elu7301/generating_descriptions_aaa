@@ -1,4 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, current_app
+from flask import (Blueprint, render_template, request,
+                   redirect, url_for, flash, jsonify, current_app)
+from werkzeug import Response
 from werkzeug.utils import secure_filename
 import os
 from app.utils import generate_description_logic, user_data
@@ -16,15 +18,20 @@ def index() -> str:
 
 
 @main_bp.route('/select_category', methods=['POST'])
-def select_category() -> str:
+def select_category() -> Response | str:
     """Обрабатывает выбор категории."""
     category = request.form['category']
     subcategory = request.form.get('subcategory', '')
-    user_data['Вид одежды'], user_data['Предмет одежды'] = category, subcategory
+
+    user_data['Вид одежды'] = category
+    user_data['Предмет одежды'] = subcategory
 
     if category == "Аксессуары":
-        return redirect(url_for('main.ad_details', category=category, subcategory=''))
-    return render_template('ad_details.html', category=category, subcategory=subcategory)
+        return redirect(url_for('main.ad_details',
+                                category=category, subcategory=''))
+
+    return render_template('ad_details.html',
+                           category=category, subcategory=subcategory)
 
 
 @main_bp.route('/ad_details', methods=['GET'])
@@ -32,11 +39,13 @@ def ad_details() -> str:
     """Отображает детали объявления."""
     category = request.args.get('category')
     subcategory = request.args.get('subcategory')
-    return render_template('ad_details.html', category=category, subcategory=subcategory)
+
+    return render_template('ad_details.html',
+                           category=category, subcategory=subcategory)
 
 
 @main_bp.route('/save_data', methods=['POST'])
-def save_data() -> dict:
+def save_data() -> Response:
     """Сохраняет данные."""
     field_name = request.form['field_name']
     field_value = request.form['field_value']
@@ -52,18 +61,18 @@ def create_ad() -> str:
     condition = request.form['condition']
     color = request.form['color']
     brand = request.form['brand']
-    description = request.form['description']
-    category = request.form['category']
-    subcategory = request.form['subcategory']
-    price = request.form['price']
+
     image = request.files['image']
     location = request.form['location']
 
-    user_data['Заголовок'], user_data['Вид обьявления'], user_data['Состояние'], user_data['Место сделки'], user_data['Цвет'], user_data['Бренд'] = title, ad_type, condition, location, color, brand
+    user_data['Заголовок'], user_data['Вид обьявления'] = title, ad_type
+    user_data['Состояние'], user_data['Место сделки'] = condition, location
+    user_data['Цвет'], user_data['Бренд'] = color, brand
 
     if image and image.filename != '':
         filename = secure_filename(image.filename)
-        image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+        image_path = os.path.join(current_app.config['UPLOAD_FOLDER'],
+                                  filename)
         image.save(image_path)
         flash('Объявление успешно создано!', 'success')
     else:
@@ -73,9 +82,15 @@ def create_ad() -> str:
 
 
 @main_bp.route('/generate_description', methods=['POST'])
-def generate_description() -> dict:
+def generate_description() -> Response:
     """Генерирует описание."""
-    input_text = f"Заголовок: {user_data['Заголовок']}, Вид одежды: {user_data['Вид одежды']}, Вид обьявления: {user_data['Вид обьявления']}, Место сделки: {user_data['Место сделки']}, Состояние: {user_data['Состояние']}, Цвет: {user_data['Цвет']}, Бренд одежды: {user_data['Бренд']}"
+    input_text = (f"Заголовок: {user_data['Заголовок']},"
+                  f" Вид одежды: {user_data['Вид одежды']},"
+                  f" Вид обьявления: {user_data['Вид обьявления']},"
+                  f" Место сделки: {user_data['Место сделки']},"
+                  f" Состояние: {user_data['Состояние']},"
+                  f" Цвет: {user_data['Цвет']},"
+                  f" Бренд одежды: {user_data['Бренд']}")
 
     if user_data['Вид одежды'] != 'Аксессуары':
         input_text += f", Предмет одежды: {user_data['Предмет одежды']}"
