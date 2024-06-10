@@ -17,6 +17,7 @@ def generate_description_logic(input_text: str, image: PilImage) -> str:
     Возвращает:
         str: Сгенерированное описание объявления.
     """
+
     pix = feature_extractor(image, return_tensors="pt")
     text = tokenizer_gpt2(input_text, return_tensors="pt")
 

@@ -14,12 +14,14 @@ main_bp = Blueprint('main', __name__)
 @main_bp.route('/')
 def index() -> str:
     """Отображает главную страницу."""
+
     return render_template('category_select.html')
 
 
 @main_bp.route('/select_category', methods=['POST'])
 def select_category() -> Response | str:
     """Обрабатывает выбор категории."""
+
     category = request.form['category']
     subcategory = request.form.get('subcategory', '')
 
@@ -37,6 +39,7 @@ def select_category() -> Response | str:
 @main_bp.route('/ad_details', methods=['GET'])
 def ad_details() -> str:
     """Отображает детали объявления."""
+
     category = request.args.get('category')
     subcategory = request.args.get('subcategory')
 
@@ -47,6 +50,7 @@ def ad_details() -> str:
 @main_bp.route('/save_data', methods=['POST'])
 def save_data() -> Response:
     """Сохраняет данные."""
+
     field_name = request.form['field_name']
     field_value = request.form['field_value']
     user_data[field_name] = field_value
@@ -54,13 +58,15 @@ def save_data() -> Response:
 
 
 @main_bp.route('/create_ad', methods=['POST'])
-def create_ad() -> str:
+def create_ad() -> Response:
     """Создает объявление."""
+
     title = request.form['title']
     ad_type = request.form['ad_type']
     condition = request.form['condition']
     color = request.form['color']
     brand = request.form['brand']
+    size = request.form['size']
 
     image = request.files['image']
     location = request.form['location']
@@ -68,6 +74,7 @@ def create_ad() -> str:
     user_data['Заголовок'], user_data['Вид обьявления'] = title, ad_type
     user_data['Состояние'], user_data['Место сделки'] = condition, location
     user_data['Цвет'], user_data['Бренд'] = color, brand
+    user_data['Размер'] = size
 
     if image and image.filename != '':
         filename = secure_filename(image.filename)
@@ -84,13 +91,15 @@ def create_ad() -> str:
 @main_bp.route('/generate_description', methods=['POST'])
 def generate_description() -> Response:
     """Генерирует описание."""
+
     input_text = (f"Заголовок: {user_data['Заголовок']},"
                   f" Вид одежды: {user_data['Вид одежды']},"
                   f" Вид обьявления: {user_data['Вид обьявления']},"
                   f" Место сделки: {user_data['Место сделки']},"
                   f" Состояние: {user_data['Состояние']},"
                   f" Цвет: {user_data['Цвет']},"
-                  f" Бренд одежды: {user_data['Бренд']}")
+                  f" Бренд одежды: {user_data['Бренд']}"
+                  f" Размер. {user_data['Вид одежды']}: {user_data['Размер']}")
 
     if user_data['Вид одежды'] != 'Аксессуары':
         input_text += f", Предмет одежды: {user_data['Предмет одежды']}"
