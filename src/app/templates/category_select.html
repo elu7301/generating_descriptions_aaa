@@ -1,129 +1,926 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Выбор категории - Avito</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            text-align: center;
-            width: 80%;
-            max-width: 500px;
-        }
-        .container h1 {
-            font-size: 1.5em;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .form-group select,
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1em;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-    </style>
-    <script>
-        function updateSubcategories() {
-            const subcategories = {
-                "Женская одежда": ["Брюки", "Верхняя одежда", "Джинсы", "Купальники", "Нижнее бельё", "Платья", "Юбки", "Толстовки и свитшоты", "Джемперы, свитеры, кардиганы", "Пиджаки и костюмы", "Рубашки и блузки", "Свадебные платья", "Топы и футболки", "Другое"],
-                "Женская обувь": ["Туфли", "Сапоги", "Босоножки", "Ботильоны", "Ботинки и полуботинки", "Кроссовки и кеды", "Полусапоги", "Балетки", "Угги, валенки, дутики", "Сабо и мюли", "Резиновая обувь", "Мокасины и лоферы", "Сандалии", "Шлёпанцы и сланцы", "Домашняя обувь", "Спортивная обувь", "Слипоны и эспадрильи", "Уход за обувью"],
-                "Мужская одежда": ["Верхняя одежда", "Кофты и футболки", "Пиджаки и костюмы", "Джинсы", "Брюки", "Рубашки", "Спортивные костюмы", "Шорты", "Нижнее бельё", "Другое"],
-                "Мужская обувь": ["Кроссовки", "Ботинки и полуботинки", "Туфли", "Кеды", "Сапоги и полусапоги", "Мокасины и лоферы", "Спортивная обувь", "Угги, валенки, дутики", "Рабочая обувь", "Резиновая обувь", "Сандалии", "Шлёпанцы и сланцы", "Домашняя обувь", "Слипоны и эспадрильи", "Уход за обувью"],
-                "Аксессуары": [],
-                "Сумки, рюкзаки и чемоданы": ["Сумки", "Рюкзаки", "Чемоданы и дорожные сумки", "Портфели и борсетки", "Кошельки, визитницы, ключницы", "Косметички и бьюти–кейсы"]
-            };
-
-            const category = document.getElementById("category").value;
-            const subcategoryDiv = document.getElementById("subcategory-div");
-            const subcategorySelect = document.getElementById("subcategory");
-
-            if (category === "Аксессуары") {
-                subcategoryDiv.style.display = "none";
-            } else {
-                subcategoryDiv.style.display = "block";
-                subcategorySelect.innerHTML = "";
-
-                subcategories[category].forEach(subcat => {
-                    const option = document.createElement("option");
-                    option.value = subcat;
-                    option.textContent = subcat;
-                    subcategorySelect.appendChild(option);
-                });
-            }
-        }
-    </script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style_main.css') }}" />
 </head>
+<style>
+    .button:focus {
+        background-color: #ededed;
+        border-radius: 15px;
+    }
+</style>
+
 <body>
-    <div class="container">
-        <h1>Выбор категории и подкатегории</h1>
-        <form id="categoryForm" action="/select_category" method="POST" onsubmit="return validateForm()">
-            <div class="form-group">
-                <label for="category">Категория:</label>
-                <select id="category" name="category" onchange="updateSubcategories()" required>
-                    <option value="Женская одежда">Женская одежда</option>
-                    <option value="Женская обувь">Женская обувь</option>
-                    <option value="Мужская одежда">Мужская одежда</option>
-                    <option value="Мужская обувь">Мужская обувь</option>
-                    <option value="Аксессуары">Аксессуары</option>
-                    <option value="Сумки, рюкзаки и чемоданы">Сумки, рюкзаки и чемоданы</option>
-                </select>
-            </div>
-            <div class="form-group" id="subcategory-div">
-                <label for="subcategory">Подкатегория:</label>
-                <select id="subcategory" name="subcategory" required>
-                    <!-- Subcategories will be populated here based on selected category -->
-                </select>
-            </div>
-            <button type="submit">Далее</button>
-        </form>
+    {% include 'header.html' %}
+    <div class="header">
+        <div class="container">
+            <p class="header__title">Новое объявление</p>
+        </div>
     </div>
-
+    <div class="section">
+        <div class="container">
+            <div class="category">
+                <div class="firstCategoryTable">
+                    <button
+                        class="firstCategoryTable__name"
+                        id="firstCategoryTable__name"
+                        type="button"
+                        onmousedown="viewCategoryWomenClothes()"
+                        value="Женская одежда"
+                    >
+                    Женская одежда
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="firstCategoryTable__name"
+                        type="button"
+                        onmousedown="viewCategoryWomenShoes()"
+                        value="Женская обувь"
+                    >
+                    Женская обувь
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="firstCategoryTable__name"
+                        type="button"
+                        onmousedown="viewCategoryMenClothes()"
+                        value="Мужская одежда"
+                    >
+                    Мужская одежда
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="firstCategoryTable__name"
+                        type="button"
+                        onmousedown="viewCategoryMenShoes()"
+                        value="Мужская обувь"
+                    >
+                    Мужская обувь
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="firstCategoryTable__name"
+                        type="button"
+                        value="Аксессуары"
+                        onclick="window.location='ad_details'"
+                    >
+                    Аксессуары
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="firstCategoryTable__name"
+                        type="button"
+                        onmousedown="viewCategoryBags()"
+                        value="Сумки, рюкзаки, чемоданы "
+                    >
+                    Сумки, рюкзаки, чемоданы
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                </div>
+                <div id="WomansClothesCategoryTable">
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Брюки"
+                        onclick="window.location='ad_details'"
+                    >
+                    Брюки
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Верхняя одежда"
+                        onclick="window.location='ad_details'"
+                    >
+                    Верхняя одежда
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Джинсы"
+                        onclick="window.location='ad_details'"
+                    >
+                    Джинсы
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Купальники"
+                        onclick="window.location='ad_details'"
+                    >
+                    Купальники
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Нижнее бельё"
+                        onclick="window.location='ad_details'"
+                    >
+                    Нижнее бельё
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Платья"
+                        onclick="window.location='ad_details'"
+                    >
+                    Платья
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Юбки"
+                        onclick="window.location='ad_details'"
+                    >
+                    Юбки
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Толстовки и свитшоты"
+                        onclick="window.location='ad_details'"
+                    >
+                    Толстовки и свитшоты
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Джемперы, свитеры, кардиганы"
+                        onclick="window.location='ad_details'"
+                    >
+                    Джемперы, свитеры, кардиганы
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Пиджаки и костюмы"
+                        onclick="window.location='ad_details'"
+                    >
+                    Пиджаки и костюмы
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Рубашки и блузки"
+                        onclick="window.location='ad_details'"
+                    >
+                    Рубашки и блузки
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Свадебные платья"
+                        onclick="window.location='ad_details'"
+                    >
+                    Свадебные платья
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Топы и футболки"
+                        onclick="window.location='ad_details'"
+                    >
+                    Топы и футболки
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Другое"
+                        onclick="window.location='ad_details'"
+                    >
+                    Другое
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                </div>
+                <div id="WomansShoesCategoryTable">
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Туфли"
+                        onclick="window.location='ad_details'"
+                    >
+                    Туфли
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Сапоги"
+                        onclick="window.location='ad_details'"
+                    >
+                    Сапоги
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Босоножки"
+                        onclick="window.location='ad_details'"
+                    >
+                    Босоножки
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Ботильоны"
+                        onclick="window.location='ad_details'"
+                    >
+                    Ботильоны
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Ботинки и полуботинки"
+                        onclick="window.location='ad_details'"
+                    >
+                    Ботинки и полуботинки
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Кроссовки и кеды"
+                        onclick="window.location='ad_details'"
+                    >
+                    Кроссовки и кеды
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Полусапоги"
+                        onclick="window.location='ad_details'"
+                    >
+                    Полусапоги
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Балетки"
+                        onclick="window.location='ad_details'"
+                    >
+                    Балетки
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Угги, валенки, дутики"
+                        onclick="window.location='ad_details'"
+                    >
+                    Угги, валенки, дутики
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Сабо и мюли"
+                        onclick="window.location='ad_details'"
+                    >
+                    Сабо и мюли
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Резиновая обувь"
+                        onclick="window.location='ad_details'"
+                    >
+                    Резиновая обувь
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Мокасины и лоферы"
+                        onclick="window.location='ad_details'"
+                    >
+                    Мокасины и лоферы
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Сандалии"
+                        onclick="window.location='ad_details'"
+                    >
+                    Сандалии
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Шлёпанцы и сланцы"
+                        onclick="window.location='ad_details'"
+                    >
+                    Шлёпанцы и сланцы
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Домашняя обувь"
+                        onclick="window.location='ad_details'"
+                    >
+                    Домашняя обувь
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Спортивная обувь"
+                        onclick="window.location='ad_details'"
+                    >
+                    Спортивная обувь
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Слипоны и эспадрильи"
+                        onclick="window.location='ad_details'"
+                    >
+                    Слипоны и эспадрильи
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Уход за обувью"
+                        onclick="window.location='ad_details'"
+                    >
+                    Уход за обувью
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                </div>
+                <div id="MansClothesCategoryTable">
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Верхняя одежда"
+                        onclick="window.location='ad_details'"
+                    >
+                    Верхняя одежда
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Кофты и футболки"
+                        onclick="window.location='ad_details'"
+                    >
+                    Кофты и футболки
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Пиджаки и костюмы"
+                        onclick="window.location='ad_details'"
+                    >
+                    Пиджаки и костюмы
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Джинсы"
+                        onclick="window.location='ad_details'"
+                    >
+                    Джинсы
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Брюки"
+                        onclick="window.location='ad_details'"
+                    >
+                    Брюки
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Рубашки"
+                        onclick="window.location='ad_details'"
+                    >
+                    Рубашки
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Спортивные костюмы"
+                        onclick="window.location='ad_details'"
+                    >
+                    Спортивные костюмы
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Шорты"
+                        onclick="window.location='ad_details'"
+                    >
+                    Шорты
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Нижнее бельё"
+                        onclick="window.location='ad_details'"
+                    >
+                    Нижнее бельё
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Другое"
+                        onclick="window.location='ad_details'"
+                    >
+                    Другое
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                </div>
+                <div id="MansShoesCategoryTable">
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Кроссовки"
+                        onclick="window.location='ad_details'"
+                    >
+                    Кроссовки
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Ботинки и полуботинки"
+                        onclick="window.location='ad_details'"
+                    >
+                    Ботинки и полуботинки
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Туфли"
+                        onclick="window.location='ad_details'"
+                    >
+                    Туфли
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Кеды"
+                        onclick="window.location='ad_details'"
+                    >
+                    Кеды
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Сапоги и полусапоги"
+                        onclick="window.location='ad_details'"
+                    >
+                    Сапоги и полусапоги
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Мокасины и лоферы"
+                        onclick="window.location='ad_details'"
+                    >
+                    Мокасины и лоферы
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Спортивная обувь"
+                        onclick="window.location='ad_details'"
+                    >
+                    Спортивная обувь
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Угги, валенки, дутики"
+                        onclick="window.location='ad_details'"
+                    >
+                    Угги, валенки, дутики
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Рабочая обувь"
+                        onclick="window.location='ad_details'"
+                    >
+                    Рабочая обувь
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Резиновая обувь"
+                        onclick="window.location='ad_details'"
+                    >
+                    Резиновая обувь
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Сандалии"
+                        onclick="window.location='ad_details'"
+                    >
+                    Сандалии
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Шлёпанцы и сланцы"
+                        onclick="window.location='ad_details'"
+                    >
+                    Шлёпанцы и сланцы
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Домашняя обувь"
+                        onclick="window.location='ad_details'"
+                    >
+                    Домашняя обувь
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Слипоны и эспадрильи"
+                        onclick="window.location='ad_details'"
+                    >
+                    Слипоны и эспадрильи
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Уход за обувью"
+                        onclick="window.location='ad_details'"
+                    >
+                    Уход за обувью
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                </div>
+                <div id="BagsCategoryTable">
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Сумки"
+                        onclick="window.location='ad_details'"
+                    >
+                    Сумки
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Рюкзаки"
+                        onclick="window.location='ad_details'"
+                    >
+                    Рюкзаки
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Чемоданы и дорожные сумки"
+                        onclick="window.location='ad_details'"
+                    >
+                    Чемоданы и дорожные сумки
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Портфели и борсетки"
+                        onclick="window.location='ad_details'"
+                    >
+                    Портфели и борсетки
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Кошельки, визитницы, ключницы"
+                        onclick="window.location='ad_details'"
+                    >
+                    Кошельки, визитницы, ключницы
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                    <button
+                        class="firstCategoryTable__name"
+                        id="subcategoryTable__name"
+                        type="button"
+                        value="Косметички и бьюти–кейсы"
+                        onclick="window.location='ad_details'"
+                    >
+                    Косметички и бьюти–кейсы
+                    <span class="material-symbols-outlined">
+                        arrow_forward_ios
+                    </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
-        // Initialize subcategories on page load
-        document.addEventListener("DOMContentLoaded", updateSubcategories);
+        function viewCategoryWomenClothes(){
+            document.getElementById("WomansClothesCategoryTable").style.display = "flex";
+            document.getElementById("WomansShoesCategoryTable").style.display = "none";
+            document.getElementById("MansClothesCategoryTable").style.display = "none";
+            document.getElementById("MansShoesCategoryTable").style.display = "none";
+            document.getElementById("BagsCategoryTable").style.display = "none";
+        };
+        function viewCategoryWomenShoes() {
+            document.getElementById("WomansClothesCategoryTable").style.display = "none";
+            document.getElementById("WomansShoesCategoryTable").style.display = "flex";
+            document.getElementById("MansClothesCategoryTable").style.display = "none";
+            document.getElementById("MansShoesCategoryTable").style.display = "none";
+            document.getElementById("BagsCategoryTable").style.display = "none";
+        };
+        function viewCategoryMenClothes(){
+            document.getElementById("WomansClothesCategoryTable").style.display = "none";
+            document.getElementById("WomansShoesCategoryTable").style.display = "none";
+            document.getElementById("MansClothesCategoryTable").style.display = "flex";
+            document.getElementById("MansShoesCategoryTable").style.display = "none";
+            document.getElementById("BagsCategoryTable").style.display = "none";
+        };
+        function viewCategoryMenShoes(){
+            document.getElementById("WomansClothesCategoryTable").style.display = "none";
+            document.getElementById("WomansShoesCategoryTable").style.display = "none";
+            document.getElementById("MansClothesCategoryTable").style.display = "none";
+            document.getElementById("MansShoesCategoryTable").style.display = "flex";
+            document.getElementById("BagsCategoryTable").style.display = "none";
+        };
+        function viewCategoryBags() {
+            document.getElementById("WomansClothesCategoryTable").style.display = "none";
+            document.getElementById("WomansShoesCategoryTable").style.display = "none";
+            document.getElementById("MansClothesCategoryTable").style.display = "none";
+            document.getElementById("MansShoesCategoryTable").style.display = "none";
+            document.getElementById("BagsCategoryTable").style.display = "flex";
+        };
 
-        function validateForm() {
-            const category = document.getElementById("category").value;
-            if (category === "Аксессуары") {
-                document.getElementById("subcategory").removeAttribute("required");
-            }
-            return true;
-        }
+        let category = null;
+        let subcategory = null;
+
+        document.querySelectorAll('#firstCategoryTable__name').forEach(button => {
+            button.addEventListener('click', function() {
+                category = this.value;
+                localStorage.setItem('category', category);
+            });
+        });
+
+        document.querySelectorAll('#subcategoryTable__name').forEach(button => {
+            button.addEventListener('click', function() {
+                subcategory = this.value;
+                localStorage.setItem('subcategory', subcategory);
+            });
+        });
+
     </script>
 </body>
 </html>
